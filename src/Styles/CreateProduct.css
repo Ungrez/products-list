@@ -1,0 +1,9 @@
+div#create-product {
+  max-width: 500px;
+  padding: 20px 30px;
+}
+div#create-categry {
+  margin-top: 50px;
+  max-width: 500px;
+  padding: 20px 30px;
+}
