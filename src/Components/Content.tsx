@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 const Content = () => {
   const [products, setProducts] = useState();
   const [categories, setCategories] = useState();
+  const [fresh, setFresh] = useState(false);
 
   useEffect(() => {
     try {
@@ -36,7 +37,7 @@ const Content = () => {
           }),
       ]);
     } catch (error) {}
-  }, []);
+  }, [fresh]);
 
   return (
     <div id="routes">
@@ -51,11 +52,11 @@ const Content = () => {
         ></Route>
         <Route
           path="/edit-products"
-          element={<EditProducts props={{ products, categories }} />}
+          element={<EditProducts props={{ products, categories, setFresh }} />}
         ></Route>
         <Route
           path="/edit-categories"
-          element={<EditCategories props={{ categories }} />}
+          element={<EditCategories props={{ categories, setFresh }} />}
         ></Route>
         <Route
           path="/new-product"

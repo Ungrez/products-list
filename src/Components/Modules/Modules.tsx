@@ -8,6 +8,9 @@ export type DataFetch = {
   data: Array<CartItemCategory>;
   errors: Array<CartItemCategory>;
 };
+export type Response = {
+  message: String;
+};
 
 export const headers = new Headers({
   "Content-Type": "application/json",
@@ -19,4 +22,5 @@ export type ProductItemType = {
   id: number;
   name: string;
   category_id: number;
+  uid: string;
 };

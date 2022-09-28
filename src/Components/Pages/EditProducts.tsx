@@ -1,35 +1,74 @@
 import { useState } from "react";
 import Form from "react-bootstrap/Form";
+import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import { Table } from "react-bootstrap";
-import { CartItemCategory, ProductItemType, headers } from "../Modules/Modules";
+import {
+  CartItemCategory,
+  ProductItemType,
+  headers,
+  Response,
+} from "../Modules/Modules";
 import "../../Styles/EditProducts.css";
 import Modal from "react-bootstrap/Modal";
 
 const EditProducts = ({ props }: any) => {
-  const { products, categories } = props;
-  const [showModal, setShowModal] = useState(false);
+  const { products, categories, setFresh } = props;
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [editProduct, setEditProduct] = useState<ProductItemType>();
-  const [newProductName, setNewProductName] = useState("");
+  const [newProductName, setNewProductName] = useState<string>("");
   const [newProductCategory, setNewProductCategory] = useState<number>(0);
+  const [messageFromFetch, setMessageFromFetch] = useState<Array<Response>>();
+  const [validated, setValidated] = useState<boolean>(false);
 
-  const handleEdit = () => {
-    setShowModal(false);
-    fetch("/editProduct", {
-      headers: headers,
-      method: "POST",
-      body: JSON.stringify({
-        editProductId: editProduct?.id,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        return console.log(data);
-      });
+  const handleSubmit = (e: any) => {
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+    }
+    setValidated(true);
+    if (newProductName !== "" && newProductCategory !== 0) {
+      setValidated(false);
+      setShowModal(false);
+      fetch("/editProduct", {
+        headers: headers,
+        method: "PUT",
+        body: JSON.stringify({
+          product_id: editProduct?.id,
+          productName: newProductName,
+          uid: editProduct?.uid,
+          categoryID: newProductCategory,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setFresh(true);
+          setTimeout(() => {
+            setFresh(false);
+          }, 2000);
+          return (
+            setMessageFromFetch(data),
+            setTimeout(() => {
+              setMessageFromFetch(undefined);
+            }, 3000)
+          );
+        });
+      setNewProductCategory(0);
+    }
   };
 
   return (
     <>
+      {messageFromFetch ? (
+        <Alert variant={messageFromFetch.length > 0 ? "danger" : "success"}>
+          {messageFromFetch.length > 0
+            ? messageFromFetch.map((item) => {
+                if (item.message === "product_with_name_exists")
+                  return "Name is already in used! ";
+              })
+            : "Successfully edited product"}
+        </Alert>
+      ) : null}
       <Table striped bordered hover variant="light">
         <thead>
           <tr>
@@ -64,78 +103,95 @@ const EditProducts = ({ props }: any) => {
                 >
                   Edit
                 </Button>
-                <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal
+                  show={showModal}
+                  onHide={() => {
+                    setShowModal(false);
+                    setValidated(false);
+                  }}
+                >
                   <Modal.Header closeButton>
                     <Modal.Title>Edit product</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Old product name</Form.Label>
-                      <Form.Control
-                        placeholder={
-                          editProduct
-                            ? JSON.stringify(editProduct.name)
-                            : "Null"
-                        }
-                        disabled
-                      />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Old product category</Form.Label>
-                      <Form.Control
-                        placeholder={
-                          editProduct
-                            ? categories
-                                .filter((item: CartItemCategory) => {
-                                  return item.id === editProduct.category_id;
-                                })
-                                .map((item: CartItemCategory) => {
-                                  return item.name;
-                                })
-                            : "null"
-                        }
-                        disabled
-                      />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>New product name</Form.Label>
-                      <Form.Control
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setNewProductName(e.currentTarget.value)
-                        }
-                        placeholder=""
-                      />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Select new category</Form.Label>
-                      <Form.Select
-                        onChange={(e) =>
-                          categories
-                            .filter((item: CartItemCategory) => {
-                              return item.name === e.target.value;
-                            })
-                            .map((item: CartItemCategory) => {
-                              return setNewProductCategory(item.id);
-                            })
-                        }
-                      >
-                        <option></option>
-                        {categories
-                          ? categories.map((obj: CartItemCategory) => {
-                              return <option key={obj.uid}>{obj.name}</option>;
-                            })
-                          : "Loading categories"}
-                      </Form.Select>
-                    </Form.Group>
+                    <Form noValidate validated={validated}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Old product name</Form.Label>
+                        <Form.Control
+                          required
+                          placeholder={
+                            editProduct
+                              ? JSON.stringify(editProduct.name)
+                              : "Null"
+                          }
+                          disabled
+                        />
+                        <Form.Control.Feedback type="invalid" />
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Old product category</Form.Label>
+                        <Form.Control
+                          placeholder={
+                            editProduct
+                              ? categories
+                                  .filter((item: CartItemCategory) => {
+                                    return item.id === editProduct.category_id;
+                                  })
+                                  .map((item: CartItemCategory) => {
+                                    return item.name;
+                                  })
+                              : "null"
+                          }
+                          disabled
+                        />
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>New product name</Form.Label>
+                        <Form.Control
+                          required
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setNewProductName(e.currentTarget.value)
+                          }
+                          placeholder=""
+                        />
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Select new category</Form.Label>
+                        <Form.Select
+                          required
+                          onChange={(e) =>
+                            categories
+                              .filter((item: CartItemCategory) => {
+                                return item.name === e.target.value;
+                              })
+                              .map((item: CartItemCategory) => {
+                                return setNewProductCategory(item.id);
+                              })
+                          }
+                        >
+                          <option></option>
+                          {categories
+                            ? categories.map((obj: CartItemCategory) => {
+                                return (
+                                  <option key={obj.uid}>{obj.name}</option>
+                                );
+                              })
+                            : "Loading categories"}
+                        </Form.Select>
+                      </Form.Group>
+                    </Form>
                   </Modal.Body>
                   <Modal.Footer>
                     <Button
                       variant="secondary"
-                      onClick={() => setShowModal(false)}
+                      onClick={() => {
+                        setShowModal(false);
+                        setValidated(false);
+                      }}
                     >
                       Close
                     </Button>
-                    <Button variant="primary" onClick={handleEdit}>
+                    <Button variant="primary" onClick={handleSubmit}>
                       Save Changes
                     </Button>
                   </Modal.Footer>
