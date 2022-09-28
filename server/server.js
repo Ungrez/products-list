@@ -77,6 +77,8 @@ app.put("/editProduct", async (req, res) => {
   }
 });
 
+// W TOKU //
+
 app.post("/createCategory", async (req, res) => {
   try {
     const newCategory = {
@@ -95,6 +97,8 @@ app.post("/createCategory", async (req, res) => {
     res.status(500).send("server error");
   }
 });
+
+// W TOKU
 
 app.post("/createProduct", async (req, res) => {
   try {
