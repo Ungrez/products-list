@@ -11,7 +11,9 @@ const EditCategories = ({ props }: any) => {
   const [showModal, setShowModal] = useState(false);
   const [editCategory, setEditCategory] = useState<CartItemCategory>();
   const [newCategoryName, setNewCategoryName] = useState<string>("");
-  const [messageFromFetch, setMessageFromFetch] = useState<Array<Response>>();
+  const [messageFromFetch, setMessageFromFetch] = useState<
+    Array<Response> | undefined
+  >();
   const [validated, setValidated] = useState<boolean>(false);
 
   const handleSubmit = (e: any) => {

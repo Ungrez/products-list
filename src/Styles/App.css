@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  width: 0.7em;
+  display: none;
+}
+::-webkit-scrollbar-button {
+  display: none;
+}

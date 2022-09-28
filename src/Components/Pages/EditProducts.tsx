@@ -18,7 +18,9 @@ const EditProducts = ({ props }: any) => {
   const [editProduct, setEditProduct] = useState<ProductItemType>();
   const [newProductName, setNewProductName] = useState<string>("");
   const [newProductCategory, setNewProductCategory] = useState<number>(0);
-  const [messageFromFetch, setMessageFromFetch] = useState<Array<Response>>();
+  const [messageFromFetch, setMessageFromFetch] = useState<
+    Array<Response> | undefined
+  >();
   const [validated, setValidated] = useState<boolean>(false);
 
   const handleSubmit = (e: any) => {
