@@ -10,14 +10,17 @@ import { useEffect, useState } from "react";
 const Content = () => {
   const [products, setProducts] = useState();
   const [categories, setCategories] = useState();
-  const [fresh, setFresh] = useState(false);
+  const [fresh, setFresh] = useState<boolean>(false);
 
   useEffect(() => {
     try {
       Promise.all([
-        fetch("https://newdemostock.gopos.pl/ajax/219/product_categories?", {
-          headers: headers,
-        })
+        fetch(
+          "https://newdemostock.gopos.pl/ajax/219/product_categories?&size=0",
+          {
+            headers: headers,
+          }
+        )
           .then((resp) => {
             if (!resp.ok) throw new Error(resp.statusText);
             return resp.json();
@@ -25,7 +28,7 @@ const Content = () => {
           .then(({ data }) => {
             return setCategories(data);
           }),
-        fetch("https://newdemostock.gopos.pl/ajax/219/products?", {
+        fetch("https://newdemostock.gopos.pl/ajax/219/products?size=0", {
           headers: headers,
         })
           .then((resp) => {
@@ -60,7 +63,7 @@ const Content = () => {
         ></Route>
         <Route
           path="/new-product"
-          element={<CreateProduct props={{ categories }} />}
+          element={<CreateProduct props={{ categories, setFresh }} />}
         ></Route>
       </Routes>
     </div>

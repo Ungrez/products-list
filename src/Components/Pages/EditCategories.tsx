@@ -9,17 +9,16 @@ import Alert from "react-bootstrap/Alert";
 const EditCategories = ({ props }: any) => {
   const { categories, setFresh } = props;
   const [showModal, setShowModal] = useState(false);
-  const [editCategory, setEditCategory] = useState<CartItemCategory>();
+  const [editCategory, setEditCategory] = useState<
+    CartItemCategory | undefined
+  >();
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [messageFromFetch, setMessageFromFetch] = useState<
     Array<Response> | undefined
   >();
   const [validated, setValidated] = useState<boolean>(false);
 
-  const handleSubmit = (e: any) => {
-    const form = e.currentTarget;
-    if (form.checkValidity() === false) {
-    }
+  const handleSubmit = () => {
     setValidated(true);
     if (newCategoryName !== "") {
       setValidated(false);
@@ -87,10 +86,14 @@ const EditCategories = ({ props }: any) => {
                       Edit
                     </Button>
                     <Modal
+                      animation={false}
+                      backdrop={false}
                       show={showModal}
                       onHide={() => {
                         setShowModal(false);
                         setValidated(false);
+                        setEditCategory(undefined);
+                        setNewCategoryName("");
                       }}
                     >
                       <Modal.Header closeButton>
@@ -127,6 +130,8 @@ const EditCategories = ({ props }: any) => {
                           onClick={() => {
                             setShowModal(false);
                             setValidated(false);
+                            setEditCategory(undefined);
+                            setNewCategoryName("");
                           }}
                         >
                           Close

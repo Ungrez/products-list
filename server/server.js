@@ -9,10 +9,8 @@ app.use(bodyParser.json());
 const headers = new Headers({
   "Content-Type": "application/json",
   accept: "application/json",
-  Authorization: "fd9ba9e1-0788-4e8f-ac46-a43df43e205e",
+  Authorization: "fd9ba9e1-0788-4e8f-ac46-a43df43e205e",Kombinezon dainese
 });
-
-//GOTOWE
 
 app.put("/editCategory", async (req, res) => {
   try {
@@ -39,8 +37,6 @@ app.put("/editCategory", async (req, res) => {
     res.status(500).send("server error");
   }
 });
-
-// GOTOWE
 
 app.put("/editProduct", async (req, res) => {
   try {
@@ -77,8 +73,6 @@ app.put("/editProduct", async (req, res) => {
   }
 });
 
-// W TOKU //
-
 app.post("/createCategory", async (req, res) => {
   try {
     const newCategory = {
@@ -91,8 +85,8 @@ app.post("/createCategory", async (req, res) => {
       body: JSON.stringify(newCategory),
     })
       .then((response) => response.json())
-      .then((data) => {
-        return data;
+      .then(({ data, errors }) => {
+        return data, errors;
       });
 
     return res.send(response);
@@ -101,8 +95,6 @@ app.post("/createCategory", async (req, res) => {
     res.status(500).send("server error");
   }
 });
-
-// W TOKU
 
 app.post("/createProduct", async (req, res) => {
   try {
@@ -132,7 +124,11 @@ app.post("/createProduct", async (req, res) => {
       method: "POST",
       headers: headers,
       body: JSON.stringify(newProduct),
-    }).then((response) => response.json());
+    })
+      .then((response) => response.json())
+      .then(({ data, errors }) => {
+        return data, errors;
+      });
 
     return res.send(response);
   } catch (err) {
@@ -140,4 +136,5 @@ app.post("/createProduct", async (req, res) => {
     res.status(500).send("server error");
   }
 });
+
 app.listen(5000, () => console.log("I am on port 5000"));

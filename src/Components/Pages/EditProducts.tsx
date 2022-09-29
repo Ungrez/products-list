@@ -2,7 +2,7 @@ import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
-import { Table } from "react-bootstrap";
+import Table from "react-bootstrap/Table";
 import {
   CartItemCategory,
   ProductItemType,
@@ -23,10 +23,7 @@ const EditProducts = ({ props }: any) => {
   >();
   const [validated, setValidated] = useState<boolean>(false);
 
-  const handleSubmit = (e: any) => {
-    const form = e.currentTarget;
-    if (form.checkValidity() === false) {
-    }
+  const handleSubmit = () => {
     setValidated(true);
     if (newProductName !== "" && newProductCategory !== 0) {
       setValidated(false);
@@ -106,6 +103,8 @@ const EditProducts = ({ props }: any) => {
                   Edit
                 </Button>
                 <Modal
+                  animation={false}
+                  backdrop={false}
                   show={showModal}
                   onHide={() => {
                     setShowModal(false);
@@ -120,7 +119,6 @@ const EditProducts = ({ props }: any) => {
                       <Form.Group className="mb-3">
                         <Form.Label>Old product name</Form.Label>
                         <Form.Control
-                          required
                           placeholder={
                             editProduct
                               ? JSON.stringify(editProduct.name)
