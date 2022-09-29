@@ -89,7 +89,11 @@ app.post("/createCategory", async (req, res) => {
       method: "POST",
       headers: headers,
       body: JSON.stringify(newCategory),
-    }).then((response) => response.json());
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data;
+      });
 
     return res.send(response);
   } catch (err) {

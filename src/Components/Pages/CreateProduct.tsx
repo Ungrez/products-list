@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import "../../Styles/CreateProduct.css";
 import { useState } from "react";
 import { headers, CartItemCategory } from "../Modules/Modules";
+import Alert from "react-bootstrap/Alert";
 
 const CreateProduct = ({ props }: any) => {
   const { categories } = props;
@@ -12,6 +13,10 @@ const CreateProduct = ({ props }: any) => {
   const [categoryID, setCategoryID] = useState<number>(0);
 
   const [categoryName, setCategoryName] = useState<string>("");
+
+  const [categoryResponse, setCategoryResponse] = useState();
+  const [responseError, setResponseError] = useState();
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   // Oject.keys
 
@@ -26,8 +31,9 @@ const CreateProduct = ({ props }: any) => {
       }),
     })
       .then((response) => response.json())
-      .then((data) => {
-        return console.log(data);
+      .then(({ data, errors }) => {
+        setResponseError((prevState: undefined) => (prevState = errors));
+        setCategoryResponse(data);
       });
   };
 
@@ -39,9 +45,11 @@ const CreateProduct = ({ props }: any) => {
         name: productName,
         category_id: categoryID,
       }),
-    }).then((response) => {
-      return console.log(response.json());
-    });
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return console.log(data);
+      });
   };
 
   return (
