@@ -1,16 +1,16 @@
 import { useState } from "react";
+import { headers } from "../Content";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
+import Modal from "react-bootstrap/Modal";
 import {
   CartItemCategory,
   ProductItemType,
-  headers,
   Response,
 } from "../Modules/Modules";
 import "../../Styles/EditProducts.css";
-import Modal from "react-bootstrap/Modal";
 
 const EditProducts = ({ props }: any) => {
   const { products, categories, setFresh } = props;
@@ -18,18 +18,17 @@ const EditProducts = ({ props }: any) => {
   const [editProduct, setEditProduct] = useState<ProductItemType>();
   const [newProductName, setNewProductName] = useState<string>("");
   const [newProductCategory, setNewProductCategory] = useState<number>(0);
-  const [messageFromFetch, setMessageFromFetch] = useState<
-    Array<Response> | undefined
-  >();
+  const [messageFromFetch, setMessageFromFetch] =
+    useState<Array<Response> | null>();
   const [validated, setValidated] = useState<boolean>(false);
 
   const handleSubmit = () => {
     setValidated(true);
-    if (newProductName !== "" && newProductCategory !== 0) {
+    if (newProductName.length && newProductCategory !== 0) {
       setValidated(false);
       setShowModal(false);
       fetch("/editProduct", {
-        headers: headers,
+        headers,
         method: "PUT",
         body: JSON.stringify({
           product_id: editProduct?.id,
@@ -40,7 +39,6 @@ const EditProducts = ({ props }: any) => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setFresh(true);
           setTimeout(() => {
             setFresh(false);
@@ -48,7 +46,7 @@ const EditProducts = ({ props }: any) => {
           return (
             setMessageFromFetch(data),
             setTimeout(() => {
-              setMessageFromFetch(undefined);
+              setMessageFromFetch(null);
             }, 3000)
           );
         });
@@ -59,11 +57,11 @@ const EditProducts = ({ props }: any) => {
   return (
     <>
       {messageFromFetch ? (
-        <Alert variant={messageFromFetch.length > 0 ? "danger" : "success"}>
-          {messageFromFetch.length > 0
+        <Alert variant={messageFromFetch.length ? "danger" : "success"}>
+          {messageFromFetch.length
             ? messageFromFetch.map((item) => {
                 if (item.message === "product_with_name_exists")
-                  return "Name is already in used! ";
+                  return "Name is already in use! ";
               })
             : "Successfully edited product"}
         </Alert>

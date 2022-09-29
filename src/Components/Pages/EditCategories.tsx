@@ -1,31 +1,29 @@
 import { useState } from "react";
-import { Table } from "react-bootstrap";
+import { CartItemCategory, Response } from "../Modules/Modules";
+import { headers } from "../Content";
+import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { CartItemCategory, headers, Response } from "../Modules/Modules";
 import Alert from "react-bootstrap/Alert";
 
 const EditCategories = ({ props }: any) => {
   const { categories, setFresh } = props;
-  const [showModal, setShowModal] = useState(false);
-  const [editCategory, setEditCategory] = useState<
-    CartItemCategory | undefined
-  >();
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [editCategory, setEditCategory] = useState<CartItemCategory | null>();
   const [newCategoryName, setNewCategoryName] = useState<string>("");
-  const [messageFromFetch, setMessageFromFetch] = useState<
-    Array<Response> | undefined
-  >();
+  const [messageFromFetch, setMessageFromFetch] =
+    useState<Array<Response> | null>();
   const [validated, setValidated] = useState<boolean>(false);
 
   const handleSubmit = () => {
     setValidated(true);
-    if (newCategoryName !== "") {
+    if (newCategoryName.length) {
       setValidated(false);
       setShowModal(false);
       fetch("/editCategory", {
         method: "PUT",
-        headers: headers,
+        headers,
         body: JSON.stringify({
           editCategoryId: editCategory?.id,
           newName: newCategoryName,
@@ -34,7 +32,6 @@ const EditCategories = ({ props }: any) => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setFresh(true);
           setTimeout(() => {
             setFresh(false);
@@ -42,7 +39,7 @@ const EditCategories = ({ props }: any) => {
           return (
             setMessageFromFetch(data),
             setTimeout(() => {
-              setMessageFromFetch(undefined);
+              setMessageFromFetch(null);
             }, 3000)
           );
         });
@@ -92,7 +89,7 @@ const EditCategories = ({ props }: any) => {
                       onHide={() => {
                         setShowModal(false);
                         setValidated(false);
-                        setEditCategory(undefined);
+                        setEditCategory(null);
                         setNewCategoryName("");
                       }}
                     >
@@ -130,7 +127,7 @@ const EditCategories = ({ props }: any) => {
                           onClick={() => {
                             setShowModal(false);
                             setValidated(false);
-                            setEditCategory(undefined);
+                            setEditCategory(null);
                             setNewCategoryName("");
                           }}
                         >

@@ -1,4 +1,4 @@
-import { Table } from "react-bootstrap";
+import Table from "react-bootstrap/Table";
 import { ProductItemType, CartItemCategory } from "../Modules/Modules";
 
 const ProductsList = ({ props }: any) => {

@@ -1,29 +1,29 @@
+import { useState } from "react";
+import { CartItemCategory, Response } from "../Modules/Modules";
+import { headers } from "../Content";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import "../../Styles/CreateProduct.css";
-import { useState } from "react";
-import { headers, CartItemCategory, Response } from "../Modules/Modules";
 import Alert from "react-bootstrap/Alert";
+import "../../Styles/CreateProduct.css";
 
 const CreateProduct = ({ props }: any) => {
   const { categories, setFresh } = props;
   const [productName, setProductName] = useState<string>("");
   const [categoryID, setCategoryID] = useState<number>(0);
   const [categoryName, setCategoryName] = useState<string>("");
-  const [categoryResponse, setCategoryResponse] = useState<
-    Array<Response> | undefined
-  >();
-  const [productResponse, setProductResponse] = useState<
-    Array<Response> | undefined
-  >();
+  const [categoryResponse, setCategoryResponse] =
+    useState<Array<Response> | null>();
+  const [productResponse, setProductResponse] =
+    useState<Array<Response> | null>();
   const [validatedCategory, setValidatedCategory] = useState<boolean>(false);
   const [validatedProduct, setValidatedProduct] = useState<boolean>(false);
+
   const handleCreateCategory = () => {
     setValidatedCategory(true);
-    if (categoryName !== "") {
+    if (categoryName.length) {
       setValidatedCategory(false);
       fetch("/createCategory", {
-        headers: headers,
+        headers,
         method: "POST",
         body: JSON.stringify({
           categoryName: categoryName,
@@ -31,7 +31,6 @@ const CreateProduct = ({ props }: any) => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setFresh(true);
           setTimeout(() => {
             setFresh(false);
@@ -39,7 +38,7 @@ const CreateProduct = ({ props }: any) => {
           return (
             setCategoryResponse(data),
             setTimeout(() => {
-              setCategoryResponse(undefined);
+              setCategoryResponse(null);
             }, 3000)
           );
         });
@@ -48,10 +47,10 @@ const CreateProduct = ({ props }: any) => {
   };
   const handleCreateProduct = () => {
     setValidatedProduct(true);
-    if (productName !== "" && categoryID !== 0) {
+    if (productName.length && categoryID !== 0) {
       setValidatedProduct(false);
       fetch("/createProduct", {
-        headers: headers,
+        headers,
         method: "POST",
         body: JSON.stringify({
           name: productName,
@@ -60,7 +59,6 @@ const CreateProduct = ({ props }: any) => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setFresh(true);
           setTimeout(() => {
             setFresh(false);
@@ -68,7 +66,7 @@ const CreateProduct = ({ props }: any) => {
           return (
             setProductResponse(data),
             setTimeout(() => {
-              setProductResponse(undefined);
+              setProductResponse(null);
             }, 3000)
           );
         });
@@ -78,8 +76,8 @@ const CreateProduct = ({ props }: any) => {
   return (
     <>
       {categoryResponse ? (
-        <Alert variant={categoryResponse.length > 0 ? "danger" : "success"}>
-          {categoryResponse.length > 0
+        <Alert variant={categoryResponse.length ? "danger" : "success"}>
+          {categoryResponse.length
             ? categoryResponse.map((item) => {
                 if (item.message === "constraints.nameIsUnique")
                   return "Name is already in used! ";

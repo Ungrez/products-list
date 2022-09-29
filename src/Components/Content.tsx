@@ -1,45 +1,49 @@
+import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProductsList from "./Pages/ProductsList";
 import Categories from "./Pages/Categories";
 import EditProducts from "./Pages/EditProducts";
 import EditCategories from "./Pages/EditCategories";
 import CreateProduct from "./Pages/CreateProduct";
-import { headers } from "./Modules/Modules";
-import { useEffect, useState } from "react";
+import {
+  ProductItemType,
+  CartItemCategory,
+} from "../Components/Modules/Modules";
+
+export const headers = new Headers({
+  "Content-Type": "application/json",
+  accept: "application/json",
+  Authorization: "fd9ba9e1-0788-4e8f-ac46-a43df43e205e",
+});
 
 const Content = () => {
-  const [products, setProducts] = useState();
-  const [categories, setCategories] = useState();
+  const [products, setProducts] = useState<Array<ProductItemType>>();
+  const [categories, setCategories] = useState<Array<CartItemCategory>>();
   const [fresh, setFresh] = useState<boolean>(false);
+
+  const urls = [
+    "https://newdemostock.gopos.pl/ajax/219/product_categories?&size=0",
+    "https://newdemostock.gopos.pl/ajax/219/products?size=0",
+  ];
+
+  let requests = urls.map((url) => fetch(url, { headers }));
 
   useEffect(() => {
     try {
-      Promise.all([
-        fetch(
-          "https://newdemostock.gopos.pl/ajax/219/product_categories?&size=0",
-          {
-            headers: headers,
-          }
-        )
-          .then((resp) => {
-            if (!resp.ok) throw new Error(resp.statusText);
-            return resp.json();
-          })
-          .then(({ data }) => {
-            return setCategories(data);
-          }),
-        fetch("https://newdemostock.gopos.pl/ajax/219/products?size=0", {
-          headers: headers,
+      Promise.all(requests)
+        .then((responses) => {
+          return responses;
         })
-          .then((resp) => {
-            if (!resp.ok) throw new Error(resp.statusText);
-            return resp.json();
-          })
-          .then(({ data }) => {
-            return setProducts(data);
-          }),
-      ]);
-    } catch (error) {}
+        .then((responses) =>
+          Promise.all(responses.map((response) => response.clone().json()))
+        )
+        .then((data) => {
+          setCategories(data[0].data);
+          setProducts(data[1].data);
+        });
+    } catch (error) {
+      throw new Error("Whoops! Something went wrong. Try again later.");
+    }
   }, [fresh]);
 
   return (
